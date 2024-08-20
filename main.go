@@ -7,12 +7,12 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-func sendEmail(subject string, body string, to string) {
+func sendEmail(subject string, body string, to []string) {
 	godotenv.Load()
 
 	message := gomail.NewMessage()
 	message.SetHeader("From", os.Getenv("MYEMAIL"))
-	message.SetHeader("To", to)
+	message.SetHeader("To", to...)
 	message.SetHeader("Subject", subject)
 	message.SetBody("text/html", body)
 	message.Attach("./Siri_Marvin_Resume.pdf")
@@ -25,5 +25,5 @@ func sendEmail(subject string, body string, to string) {
 }
 
 func main() {
-	sendEmail("here", "you go", "marvinsiri123@gmail.com")
+	sendEmail("here", "you go", []string{"marvinsiri123@gmail.com", "chuyilei1@gmail.com"})
 }
