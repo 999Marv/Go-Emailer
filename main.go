@@ -1,36 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"net/smtp"
 	"os"
 
 	"github.com/joho/godotenv"
+	"gopkg.in/gomail.v2"
 )
 
-func sendEmail() {
+func sendEmail(subject string, body string, to string) {
 	godotenv.Load()
-	auth := smtp.PlainAuth(
-		"",
-		os.Getenv("MYEMAIL"),
-		os.Getenv("PASSWORD"),
-		"smtp.gmail.com",
-	)
 
-	err := smtp.SendMail(
-		"smtp.gmail.com:587",
-		auth,
-		os.Getenv("MYEMAIL"),
-		[]string{os.Getenv("MYEMAIL")},
-		[]byte("Subject: HI\nThis is you"),
-	)
+	message := gomail.NewMessage()
+	message.SetHeader("From", os.Getenv("MYEMAIL"))
+	message.SetHeader("To", to)
+	message.SetHeader("Subject", subject)
+	message.SetBody("text/html", body)
+	message.Attach("./Siri_Marvin_Resume.pdf")
 
-	if err != nil {
-		fmt.Println(err)
+	d := gomail.NewDialer("smtp.gmail.com", 587, os.Getenv("MYEMAIL"), os.Getenv("PASSWORD"))
+
+	if err := d.DialAndSend(message); err != nil {
+		panic(err)
 	}
-
 }
 
 func main() {
-	sendEmail()
+	sendEmail("here", "you go", "marvinsiri123@gmail.com")
 }
